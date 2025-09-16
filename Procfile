@@ -1,0 +1,1 @@
+worker: python canvas_bot.py
