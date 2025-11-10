@@ -1,5 +1,7 @@
 import requests, time, json, os, re, html
 from datetime import datetime
+from flask import Flask
+import threading
 
 # ------------------ CONFIG ------------------
 SEEN_FILE = "seen_announcements.json"
@@ -10,6 +12,19 @@ DISCORD_WEBHOOK = os.getenv("DISCORD_WEBHOOK")
 COURSE_IDS = [104308, 104276, 104233, 104169, 104108, 105756, 103949, 105147]
 POLL_INTERVAL = 60  # seconds
 # --------------------------------------------
+
+app = Flask('')
+
+@app.route('/')
+def home():
+    return "Canvas bot running!"
+
+def run():
+    app.run(host='0.0.0.0', port=8080)
+
+def keep_alive():
+    t = threading.Thread(target=run)
+    t.start()
 
 HEADERS = {"Authorization": f"Bearer {API_TOKEN}"}
 
@@ -163,4 +178,6 @@ def main():
         time.sleep(POLL_INTERVAL)
 
 if __name__ == "__main__":
+    keep_alive()
     main()
+
