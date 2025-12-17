@@ -52,6 +52,23 @@ def fetch_announcements_for_course(course_id):
     params = {"only_announcements": True, "per_page": 100}
     return canvas_get(path, params=params)
 
+def extract_named_links(html_text):
+    """
+    Extract <a href="url">text</a> links and return them as
+    Markdown links usable by Discord.
+    """
+    if not html_text:
+        return []
+
+    links = []
+    for match in re.findall(r'<a\s+[^>]*href="([^"]+)"[^>]*>(.*?)</a>', html_text, re.IGNORECASE | re.DOTALL):
+        url, text = match
+        text = strip_html(text)
+        url = html.unescape(url)
+        if text and url:
+            links.append(f"[{text}]({url})")
+    return links
+
 def strip_html(html_text):
     if not html_text:
         return ""
@@ -140,7 +157,13 @@ def main():
             if tid in seen:
                 continue
             title = t.get("title", "(no title)")
-            body = strip_html(t.get("message", ""))
+            raw_html = t.get("message", "")
+            body = strip_html(raw_html)
+
+            named_links = extract_named_links(raw_html)
+            if named_links:
+                body += "\n\n🔗 **Links:**\n" + "\n".join(named_links)
+
             url = t.get("html_url") or f"https://{CANVAS_DOMAIN}/courses/{cid}/discussion_topics/{t.get('id')}"
             try:
                 send_to_discord(title, body, course_map.get(cid), url)
@@ -163,7 +186,13 @@ def main():
                     if tid in seen:
                         continue
                     title = t.get("title", "(no title)")
-                    body = strip_html(t.get("message", ""))
+                    raw_html = t.get("message", "")
+                    body = strip_html(raw_html)
+
+                    named_links = extract_named_links(raw_html)
+                    if named_links:
+                        body += "\n\n🔗 **Links:**\n" + "\n".join(named_links)
+
                     url = t.get("html_url") or f"https://{CANVAS_DOMAIN}/courses/{cid}/discussion_topics/{t.get('id')}"
                     try:
                         send_to_discord(title, body, course_map.get(cid), url)
@@ -180,6 +209,7 @@ def main():
 if __name__ == "__main__":
     keep_alive()
     main()
+
 
 
 
