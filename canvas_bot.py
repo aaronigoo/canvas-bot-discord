@@ -77,7 +77,7 @@ def strip_html(html_text):
     text = re.sub(r'<[^>]+>', '', html_text)
     return html.unescape(text).strip()
 
-def send_to_discord(title, body, course_name=None, url=None, author=None, attachments=None, posted_at=None):
+def send_to_discord(title, body, course_name=None, url=None, course_id, author=None, attachments=None, posted_at=None):
     embed = {
         "title": title or "(no title)",
         "description": (body[:1800] + "...") if len(body) > 1900 else body,  # limit for safety
@@ -167,7 +167,7 @@ def main():
 
             url = t.get("html_url") or f"https://{CANVAS_DOMAIN}/courses/{cid}/discussion_topics/{t.get('id')}"
             try:
-                send_to_discord(title, body, course_map.get(cid), url)
+                send_to_discord(title, body, course_map.get(cid), url, cid)
                 print("Sent:", title)
                 seen[tid] = posted
                 time.sleep(1)
@@ -210,4 +210,5 @@ def main():
 if __name__ == "__main__":
     keep_alive()
     main()
+
 
