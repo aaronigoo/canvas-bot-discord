@@ -167,7 +167,7 @@ def main():
 
             url = t.get("html_url") or f"https://{CANVAS_DOMAIN}/courses/{cid}/discussion_topics/{t.get('id')}"
             try:
-                send_to_discord(title, body, course_map.get(cid), url, cid)
+                send_to_discord(title, body, course_map.get(cid), url, course_id=cid)
                 print("Sent:", title)
                 seen[tid] = posted
                 time.sleep(1)
@@ -210,5 +210,6 @@ def main():
 if __name__ == "__main__":
     keep_alive()
     main()
+
 
 
