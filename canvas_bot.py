@@ -102,7 +102,7 @@ def send_to_discord(title, body, course_name=None, url=None, course_id, author=N
             embed["fields"] = fields
 
     payload = {
-        "content": "@" + COURSE_ROLES[COURSE_IDS.index(course_id)] + " 🚨 New Canvas Announcement!",
+        "content": "@everyone 🚨 New Canvas Announcement!",
         "embeds": [embed]
     }
 
@@ -210,6 +210,7 @@ def main():
 if __name__ == "__main__":
     keep_alive()
     main()
+
 
 
 
