@@ -9,7 +9,7 @@ INITIAL_RUN_SEND = True       # False = mark existing announcements as seen on f
 CANVAS_DOMAIN = "feu.instructure.com"   # your Canvas domain
 API_TOKEN = os.getenv("CANVAS_TOKEN")   # loaded from Render env vars
 DISCORD_WEBHOOK = os.getenv("DISCORD_WEBHOOK")
-COURSE_IDS = [106566, 106734, 107500, 107253, 107072, 107047, 108084, 107246]
+COURSE_IDS = [106566, 106734, 107500, 107253, 107072, 107047, 108084, 107246, 107342, 108172]
 COURSE_ROLES = ["CCS0005", "CCS0005", "CCS0007", "CCS0007", "GED0085", "GED0001", "GED", "GED", "IT", "NSTP1"]
 POLL_INTERVAL = 60  # seconds
 # --------------------------------------------
@@ -210,6 +210,7 @@ def main():
 if __name__ == "__main__":
     keep_alive()
     main()
+
 
 
 
