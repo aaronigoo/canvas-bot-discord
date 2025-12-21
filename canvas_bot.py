@@ -5,12 +5,12 @@ import threading
 
 # ------------------ CONFIG ------------------
 SEEN_FILE = "seen_announcements.json"
-INITIAL_RUN_SEND = False       # False = mark existing announcements as seen on first run (recommended)
+INITIAL_RUN_SEND = True                # False = mark existing announcements as seen on first run (recommended)
 CANVAS_DOMAIN = "feu.instructure.com"   # your Canvas domain
 API_TOKEN = os.getenv("CANVAS_TOKEN")   # loaded from Render env vars
 DISCORD_WEBHOOK = os.getenv("DISCORD_WEBHOOK")
 COURSE_IDS = [106566, 106734, 107500, 107253, 107072, 107047, 108084, 107246, 107342, 108172]
-COURSE_ROLES = ["CCS0005", "CCS0005", "CCS0007", "CCS0007", "GED0085", "GED0001", "GED", "GED", "IT", "NSTP1"]
+COURSE_ROLES = ["CCS0005", "CCS0005", "CCS0007", "CCS0007", "GED0085", "GED0001", "GED", "GED", "IT0003", "NSTP1"]
 POLL_INTERVAL = 60  # seconds
 # --------------------------------------------
 
@@ -77,12 +77,18 @@ def strip_html(html_text):
     text = re.sub(r'<[^>]+>', '', html_text)
     return html.unescape(text).strip()
 
+def course_roles(cid):
+    # save course roles
+    role = COURSE_ROLES[COURSE_IDS.index(cid)]
+    return role
+
 def send_to_discord(title, body, course_name=None, url=None, author=None, attachments=None, posted_at=None):
+    discord_role = course_roles(cid)
     embed = {
         "title": title or "(no title)",
         "description": (body[:1800] + "...") if len(body) > 1900 else body,  # limit for safety
         "url": url,
-        "color": 0x3498db,  # nice blue
+        "color": 0x3498db,
         "footer": {"text": f"{course_name}" if course_name else "Canvas Announcement"},
     }
     if posted_at:
@@ -102,7 +108,7 @@ def send_to_discord(title, body, course_name=None, url=None, author=None, attach
             embed["fields"] = fields
 
     payload = {
-        "content": "@everyone 🚨 New Canvas Announcement!",
+        "content": "@" + discord_role + " 🚨 New Canvas Announcement!",
         "embeds": [embed]
     }
 
@@ -167,7 +173,7 @@ def main():
 
             url = t.get("html_url") or f"https://{CANVAS_DOMAIN}/courses/{cid}/discussion_topics/{t.get('id')}"
             try:
-                send_to_discord(title, body, course_map.get(cid), url)
+                send_to_discord(cid, title, body, course_map.get(cid), url)
                 print("Sent:", title)
                 seen[tid] = posted
                 time.sleep(1)
@@ -210,10 +216,3 @@ def main():
 if __name__ == "__main__":
     keep_alive()
     main()
-
-
-
-
-
-
-
