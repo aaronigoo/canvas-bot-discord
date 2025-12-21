@@ -5,7 +5,7 @@ import threading
 
 # ------------------ CONFIG ------------------
 SEEN_FILE = "seen_announcements.json"
-INITIAL_RUN_SEND = False                # False = mark existing announcements as seen on first run (recommended)
+INITIAL_RUN_SEND = True                # False = mark existing announcements as seen on first run (recommended)
 CANVAS_DOMAIN = "feu.instructure.com"   # your Canvas domain
 API_TOKEN = os.getenv("CANVAS_TOKEN")   # loaded from Render env vars
 DISCORD_WEBHOOK = os.getenv("DISCORD_WEBHOOK")
