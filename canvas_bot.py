@@ -82,7 +82,7 @@ def course_roles(cid):
     role = COURSE_ROLES[COURSE_IDS.index(cid)]
     return role
 
-def send_to_discord(title, body, course_name=None, url=None, author=None, attachments=None, posted_at=None):
+def send_to_discord(cid, title, body, course_name=None, url=None, author=None, attachments=None, posted_at=None):
     discord_role = course_roles(cid)
     embed = {
         "title": title or "(no title)",
@@ -215,4 +215,5 @@ def main():
 
 if __name__ == "__main__":
     keep_alive()
+
     main()
