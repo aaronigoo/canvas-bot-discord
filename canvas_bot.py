@@ -5,7 +5,7 @@ import threading
 
 # ------------------ CONFIG ------------------
 SEEN_FILE = "seen_announcements.json"
-INITIAL_RUN_SEND = True                # False = mark existing announcements as seen on first run (recommended)
+INITIAL_RUN_SEND = False                # False = mark existing announcements as seen on first run (recommended)
 CANVAS_DOMAIN = "feu.instructure.com"   # your Canvas domain
 API_TOKEN = os.getenv("CANVAS_TOKEN")   # loaded from Render env vars
 DISCORD_WEBHOOK = os.getenv("DISCORD_WEBHOOK")
@@ -40,18 +40,30 @@ def load_seen():
 
 def canvas_get(path, params=None):
     url = f"https://{CANVAS_DOMAIN}{path}"
-    r = requests.get(url, headers=HEADERS, params=params, timeout=30)
-    r.raise_for_status()
-    return r.json()
+    try:
+        r = requests.get(url, headers=HEADERS, params=params, timeout=30)
+
+        if r.status_code == 404:
+            print(f"[WARN] 404 Not Found: {path}")
+            return None  # important: don't crash
+
+        r.raise_for_status()
+        return r.json()
+
+    except requests.exceptions.RequestException as e:
+        print(f"[ERROR] Canvas request failed ({path}): {e}")
+        return None
 
 def fetch_user_courses():
-    # returns list of courses (id,name)
-    return canvas_get("/api/v1/courses", params={"enrollment_state":"active","per_page":100})
+    data = canvas_get("/api/v1/courses", params={"enrollment_state":"active","per_page":100})
+    return data or []
+
 
 def fetch_announcements_for_course(course_id):
     path = f"/api/v1/courses/{course_id}/discussion_topics"
     params = {"only_announcements": True, "per_page": 100}
-    return canvas_get(path, params=params)
+    data = canvas_get(path, params=params)
+    return data or []   # ← empty list if 404
 
 def extract_named_links(html_text):
     """
@@ -130,11 +142,12 @@ def main():
         course_ids = COURSE_IDS
         course_map = {}
         for cid in course_ids:
-            try:
-                info = canvas_get(f"/api/v1/courses/{cid}")
+            info = canvas_get(f"/api/v1/courses/{cid}")
+            if info:
                 course_map[cid] = info.get("name")
-            except Exception:
+            else:
                 course_map[cid] = f"course_{cid}"
+
 
     # initial pass: collect existing announcements
     initial_found = []
@@ -202,7 +215,7 @@ def main():
 
                     url = t.get("html_url") or f"https://{CANVAS_DOMAIN}/courses/{cid}/discussion_topics/{t.get('id')}"
                     try:
-                        send_to_discord(title, body, course_map.get(cid), url)
+                        send_to_discord(cid, title, body, course_map.get(cid), url)
                         print(f"[{datetime.utcnow().isoformat()}] Posted announcement {tid}: {title}")
                         seen[tid] = t.get("posted_at") or ""
                         save_seen(seen)
