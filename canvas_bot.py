@@ -120,7 +120,7 @@ def send_to_discord(cid, title, body, course_name=None, url=None, author=None, a
             embed["fields"] = fields
 
     payload = {
-        "content": "@2-TX01 @" + discord_role + " 🚨 New Canvas Announcement!",
+        "content": "<@&1449808565727526973> <@" + discord_role + "> 🚨 New Canvas Announcement!",
         "embeds": [embed]
     }
 
