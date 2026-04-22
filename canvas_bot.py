@@ -5,11 +5,11 @@ import threading
 
 # ------------------ CONFIG ------------------
 SEEN_FILE = "seen_announcements.json"
-INITIAL_RUN_SEND = False                # False = mark existing announcements as seen on first run (recommended)
+INITIAL_RUN_SEND = True               # False = mark existing announcements as seen on first run (recommended)
 CANVAS_DOMAIN = "feu.instructure.com"   # your Canvas domain
 API_TOKEN = os.getenv("CANVAS_TOKEN")   # loaded from Render env vars
 DISCORD_WEBHOOK = os.getenv("DISCORD_WEBHOOK")
-COURSE_IDS = [   106566,     106734,   107500,    108695,    107072,    107047,    108084,    107246,    107342,   108172]
+COURSE_IDS = [110490, 110415, 110468, 111036, 110034, 110009, 109785, 110381, 110544, 110458]
 COURSE_ROLES = ["CCS0005", "CCS0005", "CCS0007", "CCS0007", "GED0001", "GED0015", "GED0027", "GED0085", "IT0003", "NSTP1"]
 POLL_INTERVAL = 60  # seconds
 # --------------------------------------------
