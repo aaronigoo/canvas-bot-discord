@@ -87,14 +87,8 @@ def strip_html(html_text):
     # quick-and-dirty html -> plaintext
     text = re.sub(r'<[^>]+>', '', html_text)
     return html.unescape(text).strip()
-
-def course_roles(cid):
-    # save course roles
-    role = COURSE_ROLES[COURSE_IDS.index(cid)]
-    return role
-
+    
 def send_to_discord(cid, title, body, course_name=None, url=None, author=None, attachments=None, posted_at=None):
-    discord_role = course_roles(cid)
     embed = {
         "title": title or "(no title)",
         "description": (body[:1800] + "...") if len(body) > 1900 else body,  # limit for safety
