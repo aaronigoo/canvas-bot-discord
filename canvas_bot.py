@@ -2,7 +2,7 @@ import requests, time, json, os, re, html
 from datetime import datetime
 from flask import Flask
 import threading
-import eventbrite_org_watcher
+import eventbrite_watcher
 
 # ------------------ CONFIG ------------------
 SEEN_FILE = "seen_announcements.json"
