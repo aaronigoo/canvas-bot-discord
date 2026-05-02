@@ -2,7 +2,6 @@ import requests, time, json, os, re, html
 from datetime import datetime
 from flask import Flask
 import threading
-import eventbrite_watcher
 
 # ------------------ CONFIG ------------------
 SEEN_FILE = "seen_announcements.json"
@@ -125,7 +124,6 @@ def send_to_discord(cid, title, body, course_name=None, url=None, author=None, a
 
 
 def main():
-    eventbrite_org_watcher.run_event_watch()
     seen = load_seen()   # dict of {announcement_id: posted_at}
     # get course list
     if not COURSE_IDS:
