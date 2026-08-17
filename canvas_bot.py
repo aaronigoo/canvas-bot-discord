@@ -9,7 +9,7 @@ INITIAL_RUN_SEND = False               # False = mark existing announcements as 
 CANVAS_DOMAIN = "feu.instructure.com"   # your Canvas domain
 API_TOKEN = os.getenv("CANVAS_TOKEN")   # loaded from Render env vars
 DISCORD_WEBHOOK = os.getenv("DISCORD_WEBHOOK")
-COURSE_IDS = [110490, 110415, 110468, 111036, 110034, 110009, 109785, 110381, 110544, 110458]
+COURSE_IDS = []
 POLL_INTERVAL = 60  # seconds
 # --------------------------------------------
 
